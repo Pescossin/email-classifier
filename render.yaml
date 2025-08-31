@@ -1,8 +1,0 @@
-services:
-  - type: web
-    name: email-classifier
-    env: python
-    plan: free
-    branch: main
-    buildCommand: poetry install --no-dev
-    startCommand: poetry run gunicorn app:app
