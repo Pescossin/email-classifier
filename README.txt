@@ -1,3 +1,5 @@
+**Desenvolvido por Mateus de Lima Ribeiro** - mateus.lr@outlook.com
+
 .Como Executar o Projeto
 
 1. Clone o repositório
