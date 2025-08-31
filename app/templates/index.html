@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Classificador Inteligente de Emails</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-envelope-open-text me-2"></i>
+                Classificador de Emails
+            </a>
+        </div>
+    </nav>
+
+    <div class="container my-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="text-center mb-5">
+                    <h1 class="display-4 fw-bold text-primary">Classificação Inteligente de Emails</h1>
+                    <p class="lead text-muted">Utilize inteligência artificial para classificar emails e gerar respostas automáticas</p>
+                </div>
+
+                <div class="card shadow-lg mb-4">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">
+                            <i class="fas fa-upload me-2"></i>Envie seu email para análise
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-4">
+                            <label for="emailText" class="form-label">Cole o texto do email:</label>
+                            <textarea class="form-control" id="emailText" rows="6" 
+                                      placeholder="Cole o conteúdo do email aqui..."></textarea>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="form-label">Ou faça upload de um arquivo:</label>
+                            <div class="upload-area" id="dropZone">
+                                <i class="fas fa-cloud-upload-alt fa-2x mb-3 text-primary"></i>
+                                <h5>Arraste e solte o arquivo aqui</h5>
+                                <p class="text-muted">ou</p>
+                                <input type="file" id="fileInput" class="d-none" accept=".txt,.pdf">
+                                <button class="btn btn-outline-primary mb-2" onclick="document.getElementById('fileInput').click()">
+                                    <i class="fas fa-file me-1"></i>Selecione um arquivo
+                                </button>
+                                <p class="text-muted small">Arquivos suportados: .txt, .pdf</p>
+                                <div id="fileName" class="small text-muted mt-2"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid">
+                            <button class="btn btn-primary btn-lg py-3" id="analyzeBtn">
+                                <i class="fas fa-robot me-2"></i>Analisar Email
+                            </button>
+                        </div>
+                        
+                        <div class="text-center mt-4" id="loadingSpinner" style="display: none;">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Processando...</span>
+                            </div>
+                            <p class="mt-2 text-muted">Processando seu email...</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card shadow-lg" id="resultCard" style="display: none;">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">
+                            <i class="fas fa-chart-pie me-2"></i>Resultado da Análise
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h6 class="mb-0">Categoria:</h6>
+                            <div>
+                                <span class="badge bg-success" id="categoryBadge">Produtivo</span>
+                                <small class="text-muted ms-2" id="confidenceValue"></small>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <h6>Resposta Sugerida:</h6>
+                            <div class="response-box">
+                                <p id="suggestedResponse" class="mb-0">Carregando resposta...</p>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex gap-2 flex-wrap">
+                            <button class="btn btn-outline-primary" id="copyResponseBtn">
+                                <i class="fas fa-copy me-1"></i>Copiar Resposta
+                            </button>
+                            <button class="btn btn-outline-secondary" id="newAnalysisBtn">
+                                <i class="fas fa-redo me-1"></i>Nova Análise
+                            </button>
+                            <button class="btn btn-outline-success" id="saveResultBtn">
+                                <i class="fas fa-save me-1"></i>Salvar Resultado
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-5">
+                    <div class="col-md-6 mb-4">
+                        <div class="card h-100">
+                            <div class="card-header">
+                                <h5 class="card-title mb-0">
+                                    <i class="fas fa-info-circle me-2"></i>Como Funciona
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <p>Nosso sistema utiliza inteligência artificial para:</p>
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item d-flex align-items-center">
+                                        <i class="fas fa-check-circle text-success me-2"></i>
+                                        Classificar emails em categorias
+                                    </li>
+                                    <li class="list-group-item d-flex align-items-center">
+                                        <i class="fas fa-check-circle text-success me-2"></i>
+                                        Sugerir respostas automáticas
+                                    </li>
+                                    <li class="list-group-item d-flex align-items-center">
+                                        <i class="fas fa-check-circle text-success me-2"></i>
+                                        Otimizar o fluxo de trabalho
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6 mb-4">
+                        <div class="card h-100">
+                            <div class="card-header">
+                                <h5 class="card-title mb-0">
+                                    <i class="fas fa-history me-2"></i>Histórico Recente
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div id="historyContainer">
+                                    <p class="text-muted text-center">Nenhuma análise realizada ainda</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-dark text-white text-center py-4 mt-5">
+        <div class="container">
+            <p class="mb-0">Sistema de Classificação de Emails &copy; 2023</p>
+            <p class="text-muted mb-0">Utilizando Processamento de Linguagem Natural e Inteligência Artificial</p>
+        </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
