@@ -1,4 +1,3 @@
-// Elementos da interface
 const analyzeBtn = document.getElementById('analyzeBtn');
 const resultCard = document.getElementById('resultCard');
 const loadingSpinner = document.getElementById('loadingSpinner');
@@ -14,17 +13,14 @@ const dropZone = document.getElementById('dropZone');
 const fileName = document.getElementById('fileName');
 const confidenceValue = document.getElementById('confidenceValue');
 
-// Histórico de análises
 let analysisHistory = [];
 
-// Event Listeners
 analyzeBtn.addEventListener('click', analyzeEmail);
 copyResponseBtn.addEventListener('click', copyResponseToClipboard);
 newAnalysisBtn.addEventListener('click', resetForm);
 saveResultBtn.addEventListener('click', saveResult);
 fileInput.addEventListener('change', handleFileSelect);
 
-// Configuração da área de arrastar e soltar
 ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
     dropZone.addEventListener(eventName, preventDefaults, false);
 });
@@ -81,7 +77,6 @@ function handleFiles(files) {
             };
             reader.readAsText(file);
         } else if (fileType === 'application/pdf') {
-            // Para PDF, apenas mostramos o nome do arquivo
             emailText.value = `[Arquivo PDF: ${file.name}] - Em uma implementação completa, o texto seria extraído automaticamente.`;
         } else {
             alert('Por favor, selecione um arquivo .txt ou .pdf');
@@ -91,7 +86,6 @@ function handleFiles(files) {
     }
 }
 
-// Função principal para análise do email
 async function analyzeEmail() {
     const emailContent = emailText.value.trim();
     
@@ -100,7 +94,6 @@ async function analyzeEmail() {
         return;
     }
     
-    // Mostrar spinner de carregamento
     loadingSpinner.style.display = 'block';
     analyzeBtn.disabled = true;
     
@@ -121,10 +114,8 @@ async function analyzeEmail() {
         const data = await response.json();
         
         if (response.ok) {
-            // Atualizar a interface com os resultados
             updateUI(data.category, data.response, data.confidence);
             
-            // Adicionar ao histórico
             addToHistory(emailContent, data.category, data.response);
         } else {
             alert('Erro: ' + data.error);
@@ -132,15 +123,12 @@ async function analyzeEmail() {
     } catch (error) {
         alert('Erro de conexão: ' + error.message);
     } finally {
-        // Esconder spinner
         loadingSpinner.style.display = 'none';
         analyzeBtn.disabled = false;
     }
 }
 
-// Atualizar a interface com os resultados
 function updateUI(category, response, confidence) {
-    // Atualizar categoria
     categoryBadge.textContent = category;
     
     if (category === 'Produtivo') {
@@ -151,24 +139,18 @@ function updateUI(category, response, confidence) {
         resultCard.className = 'card shadow-lg category-improdutivo';
     }
     
-    // Adicionar indicador de confiança
     confidenceValue.textContent = `(${Math.round(confidence * 100)}% de confiança)`;
     
-    // Atualizar resposta sugerida
     suggestedResponse.textContent = response;
     
-    // Mostrar resultados
     resultCard.style.display = 'block';
     
-    // Rolar para os resultados
     resultCard.scrollIntoView({ behavior: 'smooth' });
 }
 
-// Copiar resposta para a área de transferência
 function copyResponseToClipboard() {
     const responseText = suggestedResponse.textContent;
     navigator.clipboard.writeText(responseText).then(() => {
-        // Feedback visual
         const originalText = copyResponseBtn.innerHTML;
         copyResponseBtn.innerHTML = '<i class="fas fa-check me-1"></i>Copiado!';
         setTimeout(() => {
@@ -177,7 +159,6 @@ function copyResponseToClipboard() {
     });
 }
 
-// Reiniciar o formulário
 function resetForm() {
     emailText.value = '';
     fileInput.value = '';
@@ -186,19 +167,15 @@ function resetForm() {
     confidenceValue.textContent = '';
 }
 
-// Salvar resultado (simulação)
 function saveResult() {
     alert('Funcionalidade de salvar será implementada em breve!');
 }
 
-// Adicionar ao histórico
 function addToHistory(content, category, response) {
-    // Limitar o histórico aos 5 itens mais recentes
     if (analysisHistory.length >= 5) {
         analysisHistory.pop();
     }
     
-    // Adicionar novo item no início do array
     analysisHistory.unshift({
         content: content.length > 100 ? content.substring(0, 100) + '...' : content,
         category: category,
@@ -206,11 +183,9 @@ function addToHistory(content, category, response) {
         timestamp: new Date().toLocaleTimeString()
     });
     
-    // Atualizar a interface do histórico
     updateHistoryUI();
 }
 
-// Atualizar a interface do histórico
 function updateHistoryUI() {
     if (analysisHistory.length === 0) {
         historyContainer.innerHTML = '<p class="text-muted text-center">Nenhuma análise realizada ainda</p>';
@@ -236,7 +211,6 @@ function updateHistoryUI() {
     historyContainer.innerHTML = historyHTML;
 }
 
-// Copiar resposta do histórico
 function copyHistoryResponse(index) {
     const response = analysisHistory[index].response;
     navigator.clipboard.writeText(response).then(() => {
@@ -244,9 +218,7 @@ function copyHistoryResponse(index) {
     });
 }
 
-// Inicializar a página
 document.addEventListener('DOMContentLoaded', function() {
-    // Verificar se há parâmetros na URL (para futuras implementações)
     const urlParams = new URLSearchParams(window.location.search);
     const prefillText = urlParams.get('text');
     
